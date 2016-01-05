@@ -68,7 +68,7 @@
   aborted and next row is processed.
 
 */
-bool Ignore_error_handler::handle_condition(THD *thd,
+bool Ignore_error_handler::handle_condition(THD *thd,  //This is defined out of class
                                             uint sql_errno,
                                             const char *sqlstate,
                                             Sql_condition::enum_severity_level *level,
@@ -80,6 +80,7 @@ bool Ignore_error_handler::handle_condition(THD *thd,
     which contains statements without IGNORE then this handler should
     not convert the errors within trigger to warnings.
   */
+	// set for insert ignore into sql statement
   if (!thd->lex->is_ignore())
     return false;
   /*
@@ -95,6 +96,7 @@ bool Ignore_error_handler::handle_condition(THD *thd,
   */
   switch (sql_errno)
   {
+  // multiple case could use the same actions,dont forget to add a break
   case ER_SUBQUERY_NO_1_ROW:
   case ER_ROW_IS_REFERENCED_2:
   case ER_NO_REFERENCED_ROW_2:
@@ -154,7 +156,7 @@ bool View_error_handler::handle_condition(
       return true;
     }
   }
-  return false;
+  return false;  //zyk:why here return false,don't understand
 }
 
 /**
@@ -254,7 +256,7 @@ public:
     : m_handled_errors(false), m_unhandled_errors(false)
   {}
 
-  virtual bool handle_condition(THD *thd,
+  virtual bool handle_condition(THD *thd,//virtual function
                                 uint sql_errno,
                                 const char* sqlstate,
                                 Sql_condition::enum_severity_level *level,
@@ -507,7 +509,7 @@ extern "C" uchar *table_def_key(const uchar *record, size_t *length,
 {
   TABLE_SHARE *entry=(TABLE_SHARE*) record;
   *length= entry->table_cache_key.length;
-  return (uchar*) entry->table_cache_key.str;
+  return (uchar*) entry->table_cache_key.str; //zyk(uchar *) 强制类型转换
 }
 
 
@@ -815,6 +817,7 @@ found:
     share->next->prev= share->prev;
     share->next= 0;
     share->prev= 0;
+    //zyk这里是链表的只是
   }
 
    /* Free cache if too big */
